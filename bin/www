@@ -1,0 +1,5 @@
+#!/usr/bin/env DEBUG=* nodemon
+var debug = require('debug')('munchr');
+var app = require('../app');
+app.set('port', process.env.PORT || 8000);
+debug(app.listen(app.get('port')));

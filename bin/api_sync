@@ -1,0 +1,8 @@
+#!/usr/bin/env DEBUG=* nodemon
+var config  = require('../config.js');
+var ApiSync = require('../apiSync');
+
+ApiSync.run(config.dbPath, function(connection){
+  if (connection) ApiSync.fetchRemoteApi();
+  else process.exit(1);
+})   
