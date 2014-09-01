@@ -2,3 +2,9 @@ script(type="text/javascript", src="//code.jquery.com/jquery-2.1.1.min.js").
 script(type="text/javascript", src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js").
 script(type="text/javascript", src="http://maps.google.com/maps/api/js?key=AIzaSyCmnhSA_GgN_ilFzRL1MEwWamm2y0LMUYA").
 script(type="text/javascript", src="javascripts/googleMap.js").
+script.
+  document.onreadystatechange = function(){
+   if (document.readyState == "complete") {
+      document.body.classList.remove('hide');
+    }
+  };
