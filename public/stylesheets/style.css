@@ -54,6 +54,9 @@ ul li.truckRow {
   overflow-x: hidden;
   overflow-y: hidden;
 }
+.truckAddress {
+  font-size: 12px;
+}
 .truckName {
   font-weight: 700;
 }

@@ -121,7 +121,7 @@ var addToTruckList = function(truckList, truck){
   
   var truckAddress = document.createElement('td');
   truckAddress.classList.add('truckAddress');
-  truckAddress.innerText = truck.address;
+  truckAddress.innerText = truck.locationdescription;
   
   truckRow.appendChild(truckName);
   truckRow.appendChild(truckAddress);
