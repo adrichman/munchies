@@ -26,7 +26,7 @@ var TruckFactory = function(mongoose){
     collection: 'trucks' 
   });
 
-  truckSchema.index({ geoJSON: '2d' });
+  truckSchema.index({ location: '2d' });
   
   var Truck = mongoose.model('Truck', truckSchema);
   return Truck;
