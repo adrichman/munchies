@@ -1,0 +1,130 @@
+body {
+  background-color: #E5E5E5;
+}
+
+.title-bar {
+  background-color: #272727;
+  color: #EDEDED;
+  margin-bottom: 20px;
+}
+
+#mapPlaceholder {
+  position: relative;
+  height: 30rem;
+  width: auto;
+  max-width: 700px;
+  background-color: white;
+}
+
+#loading {
+}
+
+.centerMarker{
+  position:absolute;
+  background:url(http://maps.gstatic.com/mapfiles/markers2/marker.png) no-repeat;
+  top:50%;left:50%;
+
+  z-index:2;
+  margin-left:-10px;
+  margin-top:-34px;
+  height:34px;
+  width:20px;
+
+  cursor:default;
+}
+
+.centerMarkerLabel{
+  position: absolute;
+  background-image: none;
+  display: inline-block;
+  top: 50%;
+  left: 50%;
+  margin-top: -62px;
+  margin-left: -24px;
+  font-size: 10px;
+  line-height: 12px;
+  background-color: white;
+  z-index: 1;
+  padding: 2px 6px;
+  border-radius: 10px;
+  opacity: .85;
+  border: 1px solid #1F1F1F;
+  width: 50px;
+}
+
+.hide {
+  display: none;
+}
+
+
+ul {
+  li.truckRow {
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+}
+
+.truckName {
+  font-weight: 700;
+}
+
+.truckFoodItems {
+  font-size: 1rem;
+}
+
+.fade-in {
+  -moz-animation-name: fade-in;
+  -moz-animation-iteration-count: once;
+  -moz-animation-timing-function: linear;
+  -moz-animation-duration: 0.1s;
+
+  -webkit-animation-name: fade-in;
+  -webkit-animation-iteration-count: once;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-duration: 0.1s;
+}
+
+.fade-out {
+  -moz-animation-name: fade-out;
+  -moz-animation-iteration-count: once;
+  -moz-animation-timing-function: linear;
+  -moz-animation-duration: 0.1s;
+
+  -webkit-animation-name: fade-out;
+  -webkit-animation-iteration-count: once;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-duration: 0.1s;
+}
+
+@-moz-keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1.0;
+    }
+}
+@-webkit-keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1.0;
+    }
+}
+@-moz-keyframes fade-out {
+    0% {
+        opacity: 1.0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@-webkit-keyframes fade-out {
+    0% {
+        opacity: 1.0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
