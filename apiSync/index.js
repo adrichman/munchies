@@ -3,6 +3,7 @@ var DatabaseService = require('../services/DatabaseService');
 var debug           = require('debug')('dbService');
 var request         = require('request');
 var db              = new DatabaseService(debug);
+var checksumPath    = require('./config').checksumPath;
 
 APISync.run = function(path, cb){ 
   db.connect(path)
@@ -23,7 +24,7 @@ APISync.fetchRemoteApi = function(){
     queryFields.doc.location = [ 'longitude', 'latitude' ];
     queryFields.doc.times = [];
 
-    db.requiresSync(body, 'Truck', queryFields, db.sync)
+    db.requiresSync(body, 'Truck', queryFields, db.sync, checksumPath)
     .then(function(res){
       debug('write errors: %s', !+res ? 0 : res);
       process.exit(0);
