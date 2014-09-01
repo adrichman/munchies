@@ -15,6 +15,7 @@
 
   var paths = {
     munchr: [
+      './*',
       './public/javascripts/*.js',
       './public/stylesheets/*.less',
     ]
