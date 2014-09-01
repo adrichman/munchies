@@ -1,5 +1,6 @@
 body {
   background-color: #E5E5E5;
+  overflow-y: scroll;
 }
 .title-bar {
   background-color: #272727;
@@ -8,14 +9,13 @@ body {
 }
 #mapPlaceholder {
   position: relative;
-  height: 30rem;
+  height: 40rem;
   width: auto;
   max-width: 700px;
-  background-color: white;
 }
-#loading {
-  display: inline-block;
-  position: relative;
+div#loading {
+  position: static;
+  text-align: center;
 }
 .centerMarker {
   position: absolute;
