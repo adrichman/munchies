@@ -1,4 +1,4 @@
-var debug         = require('debug')('munchr');
+var debug         = require('debug')('Munchies!');
 var express       = require('express');
 var path          = require('path');
 var logger        = require('morgan');

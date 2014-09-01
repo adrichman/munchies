@@ -14,7 +14,7 @@
   var spawn = require('child_process').spawn;
 
   var paths = {
-    munchr: [
+    Munchies: [
       './*',
       './public/javascripts/*.js',
       './public/stylesheets/*.less',
@@ -55,7 +55,7 @@
   });
 
   gulp.task('watch', function(){
-    gulp.watch(paths.munchr, ['less','mocha'])
+    gulp.watch(paths.Munchies, ['less','mocha'])
   });
   
   // gulp.task('serve', function(){

@@ -1,4 +1,4 @@
-# MUNCHR
+# Munchies!
 ##SF Food Trucks, Ya Know?
 
 web server:

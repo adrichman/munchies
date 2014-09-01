@@ -10,7 +10,7 @@ Router.api = router;
 Router.api.get('*', api);
 
 Router.web.get('/', function(req, res) {
-  res.render('index', { title: 'munchr!' });
+  res.render('index', { title: 'Munchies!' });
 });
 
 Router.web.get('*', function(req, res) {
