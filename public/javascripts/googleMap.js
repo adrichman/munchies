@@ -12,7 +12,7 @@ var initialize = function(){
 };
 
 var nearbyTruckStack = [];
-var renderedTrucks   = {};
+var renderedTrucks = { lastRequest : null };
 var infoWindows = { count : 0 };
 
 var compileTemplate = function(truck){
@@ -146,6 +146,7 @@ var displayNewTrucks = function(n){
 
 var requestNearby = function(dist, n){
   var coords = map.getCenter();
+  
   var jqxhr = function(){
     return $.get("api/v1/trucks/?lng="+ coords.B +"&lat="+ coords.k +"&dist=" + dist, function(data){
       _.forEach(data, function(truck){
@@ -154,9 +155,17 @@ var requestNearby = function(dist, n){
       }) 
     });
   };
-  jqxhr().done(function(){
+  
+  var renderCallback = function(){
     nearbyTruckStack.length && displayNewTrucks(n);  
-  });
+  };
+  
+  if (renderedTrucks.lastRequest === coords) {
+    renderCallback();
+  } else {
+    jqxhr().done(renderCallback);
+    renderedTrucks.lastRequest = coords;
+  }
 };
 
 var addMapLoadListener = function(){
