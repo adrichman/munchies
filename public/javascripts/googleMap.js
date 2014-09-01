@@ -11,7 +11,7 @@ var initialize = function(){
   }
 };
 
-var nearbyTruckStack = [];
+var nearbyTruckQueue = [];
 var renderedTrucks = { lastRequest : null };
 var infoWindows = { count : 0 };
 
@@ -132,11 +132,11 @@ var displayNewTrucks = function(n){
   var truck;
   var truckList = document.getElementById('truckList');
   truckList.classList.add('list-unstyled');
-  var nextDisplayed = nearbyTruckStack.splice(0,n);
+  var nextDisplayed = nearbyTruckQueue.splice(0,n);
   var i = 1;
   while (i <= n){
     setTimeout(function(){
-      truck = nextDisplayed.pop();
+      truck = nextDisplayed.shift();
       createTruckMarker(truck);
       truckList && addToTruckList(truckList, truck);
     }, i * 200);
@@ -151,13 +151,13 @@ var requestNearby = function(dist, n){
     return $.get("api/v1/trucks/?lng="+ coords.B +"&lat="+ coords.k +"&dist=" + dist, function(data){
       _.forEach(data, function(truck){
         console.log(truck);
-        nearbyTruckStack.push(truck);
+        nearbyTruckQueue.push(truck);
       }) 
     });
   };
   
   var renderCallback = function(){
-    nearbyTruckStack.length && displayNewTrucks(n);  
+    nearbyTruckQueue.length && displayNewTrucks(n);  
   };
   
   if (renderedTrucks.lastRequest === coords) {
@@ -370,7 +370,7 @@ var showCurrentLocation = function(position){
 //   google.maps.event.addListener(map, 'mousedown', function(e){ drag = !drag });
   google.maps.event.addListener(map, 'center_changed', function(e) {
     // lastCoords = map.getCenter();
-    nearbyTruckStack = [];
+    nearbyTruckQueue = [];
   });
 };
 
