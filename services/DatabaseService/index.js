@@ -37,10 +37,11 @@ DatabaseService.prototype.connect = function(path){
   return deferred.promise;
 };
 
-DatabaseService.prototype.requiresSync = function(body, modelName, queryFields, sync){
+DatabaseService.prototype.requiresSync = function(body, modelName, queryFields, sync, path){
   /* requires: 
    * body of which to calculate checkum 
    * modelName, queryFields, and sync method to pass
+   * path to simple text file where relevant checksum is stored
    */
   var syncRequired = true; 
   var oldChecksum  = "";
@@ -49,7 +50,7 @@ DatabaseService.prototype.requiresSync = function(body, modelName, queryFields, 
   var self         = this;
 
   // read previous checksum and check for equality with new checksum
-  fs.readFile('./.last_checksum', function(err, data){
+  fs.readFile(path, function(err, data){
     oldChecksum += data;
     oldChecksum = oldChecksum.split('\n')[0];
 
@@ -82,9 +83,9 @@ DatabaseService.prototype.requiresSync = function(body, modelName, queryFields, 
   return deferred.promise;
 };
 
-DatabaseService.prototype.updateChecksum = function(checksum){
+DatabaseService.prototype.updateChecksum = function(checksum, path){
   var deferred = q.defer();
-  fs.writeFile('./.last_checksum', checksum, function(err){
+  fs.writeFile(path, checksum, function(err){
     if (err) {
       deferred.reject(err)
     } else {
