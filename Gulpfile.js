@@ -3,6 +3,7 @@
   'use strict';
 
   var gulp = require('gulp');
+  var browserify = require('gulp-browserify');
   var mocha = require('gulp-mocha');
   var gutil = require('gulp-util');
   var uglify = require('gulp-uglify');
@@ -17,7 +18,9 @@
     Munchies: [
       './*',
       './public/javascripts/*.js',
-      './public/stylesheets/*.less',
+      './public/javascripts/**/*.js',
+      './public/javascripts/munchies-map/*.js',
+      './public/stylesheets/*.less'
     ]
   };
 
@@ -39,9 +42,9 @@
   });
 
   // gulp.task('compress', function() {
-  //   gulp.src('lib/*.js')
-  //     .pipe(uglify())
-  //     .pipe(gulp.dest('dist'))
+    // gulp.src('public/javascripts/dist')
+      // .pipe(uglify())
+      // .pipe(gulp.dest('public/javascripts/dist'))
   // });
 
   gulp.task('mocha', function() {
@@ -55,8 +58,18 @@
   });
 
   gulp.task('watch', function(){
-    gulp.watch(paths.Munchies, ['less','mocha'])
+    gulp.watch(paths.Munchies, ['browserify','less','mocha'])
   });
+
+  gulp.task('browserify', function(){
+    gulp.src('public/javascripts/munchies-map/index.js')
+    .pipe(browserify({
+      insertGlobals : true,
+      detectGlobals : true,
+      debug : !gulp.env.production
+    }))
+    .pipe(gulp.dest('public/javascripts/dist'));
+  })
   
   // gulp.task('serve', function(){
   //   var child = spawn('./bin/www');
