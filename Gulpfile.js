@@ -7,6 +7,7 @@
   var mocha = require('gulp-mocha');
   var gutil = require('gulp-util');
   var uglify = require('gulp-uglify');
+  var concat = require('gulp-concat');
   var less = require('gulp-less');
   var path = require('path');
   var sourcemaps = require('gulp-sourcemaps');
@@ -16,7 +17,18 @@
 
   var paths = {
     Munchies: [
-      './*',
+      './public/*',
+      '!public/javascripts/dist/*',
+      '!public/javascripts/maps/*',
+      '!public/stylesheets/dist/*',
+      '!public/stylesheets/maps/*',
+      './*.js',
+      './*.json',
+      './views/*.jade',
+      './services/**/*.js',
+      './routes/*.js',
+      './bin/*',
+      './apiSync/*.js',
       './public/javascripts/*.js',
       './public/javascripts/**/*.js',
       './public/javascripts/munchies-map/*.js',
@@ -33,19 +45,29 @@
       .pipe(notify({message: 'Linting done'}));
   });
 
-  gulp.task('less', function () {
+  gulp.task('less', function(){
     return gulp.src('./public/stylesheets/*.less')
-      .pipe(sourcemaps.init())
       .pipe(less())
-      .pipe(sourcemaps.write('./maps'))
       .pipe(gulp.dest('./public/stylesheets'));
   });
 
-  // gulp.task('compress', function() {
-    // gulp.src('public/javascripts/dist')
-      // .pipe(uglify())
-      // .pipe(gulp.dest('public/javascripts/dist'))
-  // });
+  gulp.task('javascript', function(){
+    gulp.src([
+      './public/javascripts/munchies-map/MunchiesMapView.js',
+      './public/javascripts/munchies-map/MunchiesMap.js',
+      './public/javascripts/munchies-map/MunchiesMapDragDelegate.js',
+      './public/javascripts/munchies-map/MunchiesListView.js',
+      './public/javascripts/munchies-map/MunchiesMapMarkerDelegateMethods.js',
+      './public/javascripts/munchies-map/MunchiesMapMarkerDelegate.js'
+      ])
+      .pipe(concat('app.js'))
+      .pipe(gulp.dest('./public/javascripts/dist'));
+  });
+
+  gulp.task('uglify', function(){
+    gulp.src('./public/javascripts/dist/app.js')
+      .pipe(gulp.dest('./public/javascripts/dist/'));
+  });
 
   gulp.task('mocha', function() {
       return gulp.src(['test/*.js'], { read: false })
@@ -58,7 +80,7 @@
   });
 
   gulp.task('watch', function(){
-    gulp.watch(paths.Munchies, ['browserify','less','mocha'])
+    gulp.watch(paths.Munchies, ['less','mocha','lint','javascript', 'uglify'])
   });
 
   // gulp.task('browserify', function(){
@@ -95,4 +117,5 @@
   //       gutil.log("You access complete stdout and stderr from here"); // stdout, stderr
   //   });
   // })
+
 })();

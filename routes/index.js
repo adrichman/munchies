@@ -1,16 +1,21 @@
-var express   = require('express');
-var router    = express.Router();
-var api       = require('./apiRoutes');
-var Router    = {};
+(function(){
+  
+  'use strict';
 
-/* GET home page. */
-Router.web = router;
-Router.api = router;
+  var express   = require('express');
+  var router    = express.Router();
+  var api       = require('./apiRoutes');
+  var Router    = {};
 
-Router.api.get('*', api);
+  /* GET home page. */
+  Router.web = router;
+  Router.api = router;
 
-Router.web.get('/', function(req, res) {
-  res.render('index', { title: 'Munchies!' });
-});
+  Router.api.get('*', api);
 
-module.exports = Router;
+  Router.web.get('/', function(req, res) {
+    res.render('index', { title: 'Munchies!' });
+  });
+
+  module.exports = Router;
+}());

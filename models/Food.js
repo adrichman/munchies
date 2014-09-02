@@ -1,16 +1,20 @@
-var FoodFactory = function(mongoose){
-  var foodSchema = new mongoose.Schema({
-    _id : Number,
-    type: String,
-    trucks: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Truck' }]
-  },{ 
-    collection: 'foods' 
-  });
+(function(){
+  
+'use strict';
 
-  var Food = mongoose.model('Food', foodSchema);
-  return Food;
-};
+  var FoodFactory = function(mongoose){
+    var foodSchema = new mongoose.Schema({
+      _id : Number,
+      type: String,
+      trucks: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Truck' }]
+    },{ 
+      collection: 'foods' 
+    });
 
-module.exports = FoodFactory;
+    var Food = mongoose.model('Food', foodSchema);
+    return Food;
+  };
 
+  module.exports = FoodFactory;
 
+}());

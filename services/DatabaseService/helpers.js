@@ -1,46 +1,51 @@
-/* Database Service Helpers */
-module.exports = function(mongoose, lodash, debug){
-  var _ = lodash;
+(function(){
 
-  var gracefulExit = function(){
-    mongoose.connection.close(function(){
-      debug('mongoose connection disconnected through app termination');
-      process.exit(0);
-    });
-  };
+  'use strict';
 
-  var mapFieldsAndQuery = function(bulk, collection, queryFields){
-    // queryFields { query: { objectid : 'objectid' }, doc: {location: [lng,lat]}}
-    // parses through all fields to form a query object and map values onto doc
+  /* Database Service Helpers */
+  module.exports = function(mongoose, lodash, debug){
+    var _ = lodash;
 
-    _.forEach(collection, function(doc){
-      var query = {};
-      
-      if (queryFields.query) {
-        _.forEach(Object.keys(queryFields.query),function(field){
-          query[field] = doc[field].toString();
-        });
-      }
+    var gracefulExit = function(){
+      mongoose.connection.close(function(){
+        debug('mongoose connection disconnected through app termination');
+        process.exit(0);
+      });
+    };
 
-      if (queryFields.doc) {
-        _.forEach(Object.keys(queryFields.doc),function(field){
-          if (Array.isArray(queryFields.doc[field])){
-            doc[field] = [];
-            _.forEach(queryFields.doc[field], function(arrayField){
-              doc[field].push(parseFloat(doc[arrayField]));
-            })
-          } else {
-            doc[field] = queryFields.doc[field];
-          }
-        }); 
-      }
+    var mapFieldsAndQuery = function(bulk, collection, queryFields){
+      // queryFields { query: { objectid : 'objectid' }, doc: {location: [lng,lat]}}
+      // parses through all fields to form a query object and map values onto doc
 
-      bulk.find(query).upsert().updateOne(doc);
-    });
+      _.forEach(collection, function(doc){
+        var query = {};
+        
+        if (queryFields.query) {
+          _.forEach(Object.keys(queryFields.query),function(field){
+            query[field] = doc[field].toString();
+          });
+        }
+
+        if (queryFields.doc) {
+          _.forEach(Object.keys(queryFields.doc),function(field){
+            if (Array.isArray(queryFields.doc[field])){
+              doc[field] = [];
+              _.forEach(queryFields.doc[field], function(arrayField){
+                doc[field].push(parseFloat(doc[arrayField]));
+              })
+            } else {
+              doc[field] = queryFields.doc[field];
+            }
+          }); 
+        }
+
+        bulk.find(query).upsert().updateOne(doc);
+      });
+    }
+
+    return {
+      gracefulExit     : gracefulExit,
+      mapFieldsAndQuery: mapFieldsAndQuery
+    }
   }
-
-  return {
-    gracefulExit     : gracefulExit,
-    mapFieldsAndQuery: mapFieldsAndQuery
-  }
-}
+}());
