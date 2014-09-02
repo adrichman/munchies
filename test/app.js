@@ -1,7 +1,6 @@
 (function(){
   
   'use strict';
-
   var chai            = require('chai');
   var assert          = require('assert');
   var expect          = chai.expect;
@@ -24,6 +23,7 @@
   var api;
   chai.use(sinonChai);
   
+  
   describe('Munchies Server', function(done){
     
     before(function(done){
@@ -38,7 +38,7 @@
     });
 
     beforeEach(function(done){
-      api = supertest(process.env.MUNCHR_URL || 'http://www.FILLMEIN.com');
+      api = supertest(process.env.MUNCHR_URL || 'http://www.fakehost.com:4000');
       done();
     });
 
