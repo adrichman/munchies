@@ -5,10 +5,10 @@
   var Truck = require('./Truck.js');
   var Food  = require('./Food.js');
 
-  var Models = function(mongoose){
+  var Models = function(){
     var models = {};
-    models.Truck  = Truck(mongoose);
-    models.Food   = Food(mongoose);
+    models.Truck  = Truck;
+    models.Food   = Food;
     
     return {
       get: function(modelName){

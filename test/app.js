@@ -5,20 +5,24 @@
   var chai            = require('chai');
   var assert          = require('assert');
   var expect          = chai.expect;
-  var should          = chai.should;
+  var should          = chai.should();
   var http            = require('http');
   var fs              = require('fs');
   var util            = require('util');
   var sinon           = require('sinon');
+  var sinonChai       = require("sinon-chai");
   var supertest       = require('supertest');
   var child           = require("child_process");
   var app             = require('../app.js');
   var routes          = require('../routes/index.js');
   var config          = require('../config.js')
-  var apiHelpers      =require('../routes/helpers.js');
+  var apiHelpers      = require('../routes/helpers.js');
   var DatabaseService = require('../services/DatabaseService');
+  var mongoose        = require('mongoose');
+  var q               = require('Q');
   var server;
   var api;
+  chai.use(sinonChai);
   
   describe('Munchies Server', function(done){
     
@@ -34,7 +38,7 @@
     });
 
     beforeEach(function(done){
-      api = supertest('http://www.fakehost.com:8000');
+      api = supertest(process.env.MUNCHR_URL || 'http://www.FILLMEIN.com');
       done();
     });
 
@@ -109,18 +113,10 @@
       })
 
       xit('requests all documents in a resource collection if no id is specified', function(done){
-        // var req = {query : {}};
-        // var res = {};
-        // res.send = function(arg){
-        //   return (function(){}).bind(this, arg)
-        //   done();
-        // };
-        // this.timeout(4000);
-     
-        after(function () { jQuery.ajax.restore(); });
+        done()
       });
 
-      it('requests a single document if an id is specified', function(done){
+      xit('requests a single document if an id is specified', function(done){
         // var req = {query : { truck : { objectid : 526404 }}};
         // var res = {};
         // res.send = function(arg){
@@ -152,29 +148,46 @@
     describe('Database Service', function(done){
       describe('methods', function(done){
         
-        // var mock; 
-        // var fakeData = [{},{},{}];
+        var stub; 
+        var fakeData = [{},{},{}];
+        var query = { status: "APPROVED" };
+        var db = new DatabaseService();
+        var callback;
+
+        beforeEach(function(done) {
+          done()
+        });
+
+        afterEach(function(done){
+          done();
+        })
         
-        // beforeEach(function(done) {
-        //   mock = sinon.mock(DatabaseService.prototype).expects("retrieve").once().yieldsTo("cb", fakeData);
-        //   done();
-        // });
-        
-        // it('has a retrieve method that queries for a resource that it accepts by name ', function(done){
-        //   api
-        //   .get("/api/v1/trucks", function (fakeTrucks) {
-        //       mock.verify();
-        //       mock.restore();
-        //       done();
-        //   });
-        // });
-      
-        xit('has a connect method that accepts a URI to connect to a mongoDB', function(done){
-        
+        it('has a retrieve method that queries for a resource that it accepts by name ', function(done){
+          callback = sinon.spy(db, 'retrieve');
+          callback('Truck', query, function(err, doc){ return doc });
+          assert(callback.calledWith('Truck'));
+          callback.restore();
+          done();
         });
       
-        xit('has a method updateChecksum that overwrites an old checksum with a new one when different', function(done){
+        xit('has a connect method that accepts a URI to connect to a mongoDB', function(done){
+          callback = sinon.spy(db, 'connect');
+          callback('mongodb://localhost/munchr');
+          assert(callback.alwaysThrew());
+          callback.restore();
+          done();
+        });
       
+        it('has a method updateChecksum that overwrites an old checksum with a new one when different', function(done){
+          fs.writeFile('../.test_checksum.txt', 'not data', function(err){
+            if (err) console.log(err); 
+          })
+
+          db.updateChecksum('123445', '../test_checksum').then(function(){
+            assert(fs.readFileSync('../.test_checksum.txt') === '123445');
+          });
+          this.timeout(4000)
+          done()
         });
 
         xit('has a sync method that executes a bulk upsert to the database', function(done){
@@ -243,10 +256,26 @@
   });
 
   describe('API Sync Worker', function(done){
+    var config  = require('../config.js');
+    var ApiSync = require('../apiSync');
+    var connection = null;
+    
+    beforeEach(function(done){
+       // ApiSync.run(config.dbPath, function(connection){
+       //    if (connection){ 
+       //      connection = connection
+       //      done();
+       //    } else {
+       //      process.exit(1);
+       //    }
+       //  });
+    })
+    
     describe('connections', function(done){
-
+    
       xit('connects to the Database Service', function(done){
-      
+          assert(connection);
+          done()
       });
       
       xit('exits properly when disconnecting', function(done){
@@ -254,23 +283,25 @@
       });
     
     })
-    
+
     describe('methods', function(done){
       
-      xit('has a run method to initialize sync', function(done){
-      
+      it('has a run method to initialize sync', function(done){
+        assert(ApiSync.run);
+        done();
       });
 
-      xit('has a fetchRemoteApi method to retrieve from external API', function(done){
-      
+      it('has a fetchRemoteApi method to retrieve from external API', function(done){
+        assert(ApiSync.fetchRemoteApi);
+        done();
       });
       
-      xit('forms queries a query object for the appropriate fields', function(done){
+      xit('forms queries from a query object for the appropriate fields', function(done){
       
       });
       
       xit('makes requests to the Database Service to upsert documents', function(done){
-      
+        
       });
 
     });
@@ -278,19 +309,27 @@
   });
 
   describe('Models Module / ORM', function(done){
-    
+    var Models;  
+    before(function(done){
+      Models = require('../models')();
+      
+      done()
+    })
     describe('methods', function(done){
       
-      xit('has a getter method to retrieve instances of Mongoose models', function(done){
-      
+      it('has a get method to retrieve instances of Mongoose models', function(done){
+        assert(Models.get('Truck'))
+        done()
       });
       
-      xit('holds a reference to a factory for each model', function(done){
-      
+      it('holds a reference to a factory for each model', function(done){
+        assert(Models.get('Truck') && Models.get('Food'))
+        done()
       });
 
-      xit('s factories return an instance formed from a mongoose schema with all queryable fields', function(done){
-      
+      it('s factories return an instance formed from a mongoose schema', function(done){
+        assert(Models.get('Truck').schema)
+        done();
       });
 
     });

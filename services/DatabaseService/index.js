@@ -8,7 +8,7 @@
   var _               = require('lodash');
   var fs              = require('fs');
   var request         = require('request');
-  var Models          = require('../../models')(mongoose);
+  var Models          = require('../../models')();
   var debug           = require('debug')('dbService');
   var helpers         = require('./helpers.js')(mongoose, _, debug);
 
