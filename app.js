@@ -2,7 +2,6 @@
 
   'use strict';
 
-  var debug         = require('debug')('munchr');
   var express       = require('express');
   var path          = require('path');
   var logger        = require('morgan');
@@ -16,6 +15,7 @@
   app.set('view engine', 'jade');
 
   app.use(logger('dev'));
+
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded());
   app.use(cookieParser());
