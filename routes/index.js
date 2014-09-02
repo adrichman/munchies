@@ -13,8 +13,4 @@ Router.web.get('/', function(req, res) {
   res.render('index', { title: 'Munchies!' });
 });
 
-Router.web.get('*', function(req, res) {
-  res.redirect('/');
-});
-
 module.exports = Router;

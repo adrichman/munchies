@@ -61,15 +61,15 @@
     gulp.watch(paths.Munchies, ['browserify','less','mocha'])
   });
 
-  gulp.task('browserify', function(){
-    gulp.src('public/javascripts/munchies-map/index.js')
-    .pipe(browserify({
-      insertGlobals : true,
-      detectGlobals : true,
-      debug : !gulp.env.production
-    }))
-    .pipe(gulp.dest('public/javascripts/dist'));
-  })
+  // gulp.task('browserify', function(){
+  //   gulp.src('public/javascripts/munchies-map/index.js')
+  //   .pipe(browserify({
+  //     insertGlobals : true,
+  //     debug : !gulp.env.production
+  //   }))
+  //   .pipe(gulp.dest('dist/js'))
+  //   .pipe(gulp.dest('public/javascripts/dist'));
+  // })
   
   // gulp.task('serve', function(){
   //   var child = spawn('./bin/www');
