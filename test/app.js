@@ -1,7 +1,6 @@
 (function(){
   
   'use strict';
-
   var chai            = require('chai');
   var assert          = require('assert');
   var expect          = chai.expect;
@@ -19,10 +18,11 @@
   var apiHelpers      = require('../routes/helpers.js');
   var DatabaseService = require('../services/DatabaseService');
   var mongoose        = require('mongoose');
-  var q               = require('Q');
+  var q               = require('q');
   var server;
   var api;
   chai.use(sinonChai);
+  
   
   describe('Munchies Server', function(done){
     
@@ -38,7 +38,7 @@
     });
 
     beforeEach(function(done){
-      api = supertest(process.env.MUNCHR_URL || 'http://www.FILLMEIN.com');
+      api = supertest(process.env.MUNCHR_URL || 'http://www.fakehost.com:4000');
       done();
     });
 

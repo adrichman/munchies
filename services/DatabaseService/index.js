@@ -4,7 +4,7 @@
 
   var mongoose        = require('mongoose');
   var MD5             = require('MD5');
-  var q               = require('Q');
+  var q               = require('q');
   var _               = require('lodash');
   var fs              = require('fs');
   var request         = require('request');
