@@ -32,7 +32,9 @@
       './public/javascripts/*.js',
       './public/javascripts/**/*.js',
       './public/javascripts/munchies-map/*.js',
-      './public/stylesheets/*.less'
+      './public/stylesheets/*.less',
+      './test/*.js',
+      './test/**/*.js'
     ]
   };
 
@@ -70,17 +72,22 @@
   });
 
   gulp.task('mocha', function() {
-      return gulp.src(['test/*.js'], { read: false })
-          .pipe(mocha({ reporter: 'list' }))
-          .on('error', gutil.log);
+      return gulp.src(['./test/*.js', './test/**/*.js'], {read : false})
+          .pipe(mocha({ reporter: "spec", ui : 'bdd' }));
   });
 
-  gulp.task('watch-mocha', function() {
-      gulp.watch(['lib/**', 'test/**'], ['mocha']);
-  });
+  // gulp.task('watch-mocha', function() {
+      // gulp.watch(['./test/**'], ['mocha']);
+  // });
 
-  gulp.task('watch', function(){
-    gulp.watch(paths.Munchies, ['less','mocha','lint','javascript', 'uglify'])
+  gulp.task('default', [
+    'less',
+    // 'lint',
+    'javascript', 
+    'uglify',
+    'mocha'
+  ], function(){ 
+      gulp.watch(paths.Munchies, ['mocha','default']); 
   });
 
   // gulp.task('browserify', function(){

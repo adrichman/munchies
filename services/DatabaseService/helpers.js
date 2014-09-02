@@ -3,8 +3,7 @@
   'use strict';
 
   /* Database Service Helpers */
-  module.exports = function(mongoose, lodash, debug){
-    var _ = lodash;
+  module.exports = function(mongoose, _, debug){
 
     var gracefulExit = function(){
       mongoose.connection.close(function(){

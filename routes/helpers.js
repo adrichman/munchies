@@ -24,24 +24,29 @@
 
   function get(modelName, req, res, next){
     connectToDb(config.dbPath, function(){
+      var query = {};
       var lng = req.query.lng;
       var lat = req.query.lat;
       var dist = req.query.dist / 39.59;
-      var query = {};
-      if (req.params.truck){
-        query.objectid = req.params.truck.toString();;
-      };
-      
-      if (lng && lat && dist) {
-        query.location = {} 
-        query.location.$near = [ lng, lat ];
-        query.location.$maxDistance = dist;
-      };
+      if (req.params.truck !== undefined){
+        query.objectid = req.params.truck.toString();
+        db.retrieve(modelName, query, function(err, doc){
+          res.json(doc)
+        });
+      } else {
+        if (lng && lat && dist) {
+          query.location = {} 
+          query.location.$near = [ lng, lat ];
+          query.location.$maxDistance = dist;
+        };
 
-      query.status = "APPROVED";
-      db.retrieve(modelName, query, function(err, doc){
-        res.json(doc)
-      });
+        query.status = "APPROVED";
+        (console.log('hit',query, modelName))
+        db.retrieve(modelName, query, function(err, doc){
+          res.json(doc)
+        });
+        return;
+      };
     });
   };
 

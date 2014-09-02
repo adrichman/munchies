@@ -7,8 +7,8 @@
 
   router.get('/trucks',        helpers.get.bind(null,'Truck'));
   router.get('/trucks/:truck', helpers.get.bind(null,'Truck'));
-  router.get('/foods',         helpers.get.bind(null,'Food'));
-  router.get('/foods/food',    helpers.get.bind(null,'Food'));
+
+  router.get('/*', function(req, res, next){ next() });
 
   module.exports = router;
 

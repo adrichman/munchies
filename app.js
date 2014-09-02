@@ -9,6 +9,10 @@
   var bodyParser    = require('body-parser');
   var routes        = require('./routes/index.js');
   var app           = express();
+  var accepted      = { 
+    GET     : true, 
+    OPTIONS : true
+  };
 
   // view engine setup
   app.set('views', path.join(__dirname, 'views'));
@@ -20,20 +24,28 @@
   app.use(bodyParser.urlencoded());
   app.use(cookieParser());
 
+
   app.use(express.static(path.join(__dirname, 'public')));
+  
   app.use('/api/v1', routes.api);
-  app.use('/', function(req, res){
-    res.render('index', { title: 'Munchies!' });
+  app.use('/*', routes.web);
+
+  app.use(function(req, res, next){
+    var method = req.method.toUpperCase();
+    if (!accepted[method]){
+      var err = new Error('Not an accepted method');
+      err.status = 405;
+      next(err);
+    }
   });
+  /// error handlers courtesy of express generator
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
-    var err          = new Error('Not Found');
+    var err = new Error('Not Found');
     err.status = 404;
     next(err);
   });
-
-  /// error handlers
 
   if (app.get('env') === 'development'){
     // development error handler

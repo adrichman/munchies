@@ -20,7 +20,10 @@
 
   DatabaseService.prototype.retrieve = function(modelName, query, cb){
     var Model = Models.get(modelName);
-    if (query.location) {
+    query = query || {};
+    if (modelName && !query.objectid && !query.location) {
+      Model.find(query, cb);
+    } else if (query.location) {
       Model.find(query, cb);
     } else if (query.objectid) {
       Model.findOne().where(query).exec(cb);
