@@ -41,7 +41,6 @@
         };
 
         query.status = "APPROVED";
-        (console.log('hit',query, modelName))
         db.retrieve(modelName, query, function(err, doc){
           res.json(doc)
         });
