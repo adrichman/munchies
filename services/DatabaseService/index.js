@@ -36,11 +36,14 @@
     mongoose.connect(path);
     this.db = mongoose.connection;
     this.isConnected = true;
-    this.db.on('error', function(err){ deferred.reject(err) });
-    this.db.once('open',function()   { deferred.resolve(self.db.port) });
     
+    this.db.on('error', function(err){ 
+      this.isConnected = false;
+      deferred.reject(err); 
+    });
+    
+    this.db.once('open',function()   { deferred.resolve(self.db.port) });
     process.on('SIGINT', helpers.gracefulExit).on('SIGTERM', helpers.gracefulExit);
-
     return deferred.promise;
   };
 
