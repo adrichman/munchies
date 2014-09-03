@@ -4,7 +4,7 @@
 
   config = config || {};
   
-  config.dbPath = process.env.MONGOHQ_URL || process.env.MUNCHR_DB;
+  config.dbPath = process.env.MONGOLAB_URI || process.env.MUNCHR_DB;
   
   module.exports = config;
 
