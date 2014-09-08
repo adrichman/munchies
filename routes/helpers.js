@@ -9,7 +9,7 @@
 
   function connectToDb(path, cb){
     // don't open a connection if a connection is active
-    if (!db.isConnected){
+    if (!db.db.isConnected){
       db.connect(path)
       .then(function(port){ 
         debug('connected to database on port: %s', port);

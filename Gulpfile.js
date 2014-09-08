@@ -9,6 +9,8 @@
   var less = require('gulp-less');
   var jshint  = require('gulp-jshint');
   var notify = require('gulp-notify');
+  var spawn = require('child_process').spawn;
+  var path = require('path');
 
   var paths = {
     Munchies: [
@@ -65,23 +67,31 @@
       .pipe(gulp.dest('./public/javascripts/dist/'));
   });
 
-  gulp.task('mocha', function() {
-      return gulp.src(['./test/*.js', './test/**/*.js'], {read : false})
-          .pipe(mocha({ reporter: 'spec', ui : 'bdd' }));
+  gulp.task('test', function() {
+    return gulp.src(['./test/*.js', './test/**/*.js'], {read : false})
+        .pipe(mocha({ reporter: 'spec', ui : 'bdd' }));
   });
 
-  // gulp.task('watch-mocha', function() {
-      // gulp.watch(['./test/**'], ['mocha']);
-  // });
+  gulp.task('watch-tests',function(){
+    gulp.watch(['./test/**'], ['test']); 
+  });
+
+  // gulp.task('debug-tests', function(){
+  //   spawn('node', [ 
+  //     '--debug-brk', 
+  //     path.join(__dirname, 'node_modules/gulp/bin/gulp.js'),
+  //     'watch-tests'
+  //   ], { stdio: 'inherit' });
+  // })
 
   gulp.task('default', [
     'less',
-    // 'lint',
+    'lint',
     'javascript', 
     'uglify',
-    'mocha'
+    'test'
   ], function(){ 
-      gulp.watch(paths.Munchies, ['./node_modules/mocha/bin/mocha','default']); 
+      gulp.watch(paths.Munchies, ['test','default']); 
   });
 
 })();

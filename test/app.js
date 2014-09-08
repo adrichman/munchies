@@ -1,6 +1,9 @@
-(function(){
+// (function(){
   
   'use strict';
+  var _               = require('lodash');
+  var config          = require('../config.js');
+  var app             = require('../app.js');
   var chai            = require('chai');
   var assert          = require('assert');
   var expect          = chai.expect;
@@ -11,80 +14,91 @@
   var sinon           = require('sinon');
   var sinonChai       = require("sinon-chai");
   var supertest       = require('supertest');
-  var child           = require("child_process");
-  var app             = require('../app.js');
   var routes          = require('../routes/index.js');
   var config          = require('../config.js')
   var apiHelpers      = require('../routes/helpers.js');
   var DatabaseService = require('../services/DatabaseService');
   var mongoose        = require('mongoose');
   var q               = require('q');
+  var db              = new DatabaseService();
   var server;
   var api;
   chai.use(sinonChai);
   
   
   describe('Munchies Server', function(done){
-    
-    before(function(done){
-      var path = ('./bin/www');
-      server = child.exec(path, {detached: true, stdio: [ 0, 'out', 'err' ]});
-      setTimeout(done, 1000); // required because the server needs time to start before requests should be made
-    });
-    
+    var stub, fakeData, query, callback, promise;
+
+    this.timeout(20000);
+    api = supertest(app);
+
     after(function(done){
-      server.kill();
       done();
-    });
-
-    beforeEach(function(done){
-      api = supertest(process.env.MUNCHR_URL || 'http://www.fakehost.com:4000');
-      done();
-    });
-
-    afterEach(function(done){
-        done();
     })
 
     it('it accepts GET requests', function(done){
       api
       .get('/api/v1/trucks')
-      .expect(200,done);
+      .expect(200)
+      .end(function(err, res){
+        if (err) done(err);
+        else done();
+      });
     });
 
     it('it accepts OPTIONS requests', function(done){
       api
       .options('/api/v1/trucks/1')
-      .expect(200,done);
+      .expect(200)
+      .end(function(err, res){
+        if (err) done(err);
+        else done();
+      });
     });
 
     it('rejects POST requests', function(done){
       api
       .post('/api/v1/trucks/1')
-      .expect(405, done)
+      .expect(405)
+      .end(function(err, res){
+        if (err) done(err);
+        else done();
+      });
     });
     
     it('rejects PUT requests', function(done){
       api
       .put('/api/v1/trucks/1')
-      .expect(405, done)
+      .expect(405)
+      .end(function(err, res){
+        if (err) done(err);
+        else done();
+      });
     });
     
     it('rejects DELETE requests', function(done){
       api
       .delete('/api/v1/trucks/1')
-      .expect(405, done)
+      .expect(405)
+      .end(function(err, res){
+        if (err) done(err);
+        else done();
+      });
     });
 
     it('serves requested static assets if they exist', function(done){
        api
       .get('/')
       .expect(200)
-      .expect(/(<!DOCTYPE html>)/, done)
+      .expect(/(<!DOCTYPE html>)/)
+      .end(function(err, res){
+        if (err) done(err);
+        else done();
+      });
     });
 
     it('has a routes module', function(done){
-      expect(routes).to.be.an('object');
+      expect(routes).to.be.an('object')
       done();
     });
 
@@ -104,7 +118,11 @@
       it('accepts GET requests for resources behind the root \'/api/v1\'', function(done){
           api
           .get('/api/v1/trucks/?lng=1&lat=1&dist=1')
-          .expect(200, done)
+          .expect(200)
+          .end(function(err, res){
+            if (err) done(err);
+            else done();
+          });
       });
 
       it('connects to a database via an external database service', function(done){
@@ -112,56 +130,61 @@
         done();
       })
 
-      xit('requests all documents in a resource collection if no id is specified', function(done){
-        done()
-      });
+      it('requests all documents in a resource collection if no id is specified', function(done){
+        api
+        .get('/api/v1/trucks')
+        .expect(function(res){
+          if (!res.type.match(/json/)) throw new Error('content-type not json');
+          if (res.status !== 200)  throw new Error('status code not 200');
+          if (res.body.length < 100) throw new Error('unexpected length of response body');
+        })
+        .end(done);
+      })
 
-      xit('requests a single document if an id is specified', function(done){
-        // var req = {query : { truck : { objectid : 526404 }}};
-        // var res = {};
-        // res.send = function(arg){
-        //   return (function(){}).bind(this, arg)
-        // };
-        // apiHelpers.get('trucks', req, res, function(){
-        //   console.log('YOOO',arguments);
-        //   done();
-        // })
-        // this.timeout(4000);
-
+      it('requests a single document if an id is specified', function(done){
+        var req = {query : { truck : { objectid : '526404' }}};
+        var res = {};
+        api
+        .get('/api/v1/trucks/' + req.query.truck.objectid)
+        .expect(function(res){
+          if (res.body.length > 1) throw new Error('unexpected length of response body')
+          if (res.body.objectid !== req.query.truck.objectid) throw new Error('unexpected response body')
+        })
+        .end(done);
       });
       
-      xit('requests documents with only \'APPROVED\' status', function(done){
-
+      it('requests documents with only \'APPROVED\' status', function(done){
+        api
+        .get('/api/v1/trucks')
+        .expect(function(res){
+          _(res.body).forEach(function(truck){
+            if (truck.status !== 'APPROVED') throw new Error('incorrect status for truck:' + JSON.stringify(truck));
+          })
+        })
+        .end(done);
       })
 
       describe('Query Parameters', function(done){
-
         it('accepts valid longitude, latitude, and distance parameter', function(done){
           api
           .get('/api/v1/trucks/?lng=1&lat=1&dist=1')
-          .expect(200, done)
+          .expect(200)
+          .end(function(err, res){
+            if (err) done(err)
+            else done();
+          });
         });
-        
       })
     });
 
     describe('Database Service', function(done){
       describe('methods', function(done){
-        
-        var stub; 
-        var fakeData = [{},{},{}];
-        var query = { status: "APPROVED" };
-        var db = new DatabaseService();
-        var callback;
 
-        beforeEach(function(done) {
-          done()
+        after(function(done){
+          db.disconnect();
+          done();
         });
 
-        afterEach(function(done){
-          done();
-        })
-        
         it('has a retrieve method that queries for a resource that it accepts by name ', function(done){
           callback = sinon.spy(db, 'retrieve');
           callback('Truck', query, function(err, doc){ return doc });
@@ -170,119 +193,108 @@
           done();
         });
       
-        xit('has a connect method that accepts a URI to connect to a mongoDB', function(done){
-          callback = sinon.spy(db, 'connect');
-          callback('mongodb://localhost/munchr');
-          assert(callback.alwaysThrew());
-          callback.restore();
-          done();
+        it('has a connect method that accepts a URI to connect to a mongoDB', function(done){
+          // debugger;
+          var deferred = q.defer();
+          var connect;
+          fakeData = [{},{},{}];
+          query = { status: "APPROVED" };
+
+          stub = sinon.stub(db, 'connect');
+          stub.withArgs('mongodb://fakeuri').returns(q.reject(fakeData));
+          
+          stub.withArgs(config.db).returns(q.resolve(fakeData));
+          connect = db.connect(config.db);
+          connect.then(function(){
+            expect(connect.inspect().state).to.equal('fulfilled');
+            stub.restore();
+            done();
+          })
+          .catch(done, done)
         });
       
         it('has a method updateChecksum that overwrites an old checksum with a new one when different', function(done){
-          fs.writeFile('../.test_checksum.txt', 'not data', function(err){
-            if (err) console.log(err); 
+          db.updateChecksum('1234567890', '../.test_checksum')
+          .then(function(){
+            expect((new Buffer(fs.readFileSync('../.test_checksum'))).toString()).to.equal('1234567890');
+            done()
           })
-
-          db.updateChecksum('123445', '../test_checksum').then(function(){
-            assert(fs.readFileSync('../.test_checksum.txt') === '123445');
-          });
-          this.timeout(4000)
-          done()
+          .catch(done,done);
         });
 
-        xit('has a sync method that executes a bulk upsert to the database', function(done){
+  //       xit('has a sync method that executes a bulk upsert to the database', function(done){
       
-        });
+  //       });
 
-        describe('requiresSync', function(done){
+        // describe('requiresSync', function(done){
 
-          xit('reads the last known query data\'s checksum from disk', function(done){
+          // xit('reads the last known query data\'s checksum from disk', function(done){
         
-          });
+          // });
 
-          xit('calculates a checksum of the recent data from the remote API', function(done){
+  //         xit('calculates a checksum of the recent data from the remote API', function(done){
         
-          });
+  //         });
         
-          xit('short circuits if there is no change from old and new checksums', function(done){
+  //         xit('short circuits if there is no change from old and new checksums', function(done){
         
-          });
+  //         });
         
-          xit('initiates a bulk sync if the old and new checksums differ', function(done){
+  //         xit('initiates a bulk sync if the old and new checksums differ', function(done){
         
-          });
+  //         });
 
-          xit('overwrites an old checksum with a new one when different', function(done){
+  //         xit('overwrites an old checksum with a new one when different', function(done){
         
-          });
+  //         });
 
-          xit('returns a count of write errors after completing a sync', function(done){
+  //         xit('returns a count of write errors after completing a sync', function(done){
         
-          });
+  //         });
         
-        })
+        // })
 
       })
 
       describe('helpers module', function(done){
-        xit('has a method to handle graceful exits on disconnecting from mongodb', function(done){
+        var dbServiceHelpers = require('../services/DatabaseService/helpers.js')(mongoose, _, console.log)
         
+        it('has a method to handle graceful exits on disconnecting from mongodb', function(done){
+          assert(dbServiceHelpers.gracefulExit);
+          done();
         });
 
-        xit('has a mapFieldsAndQuery method iterate over the collection returned from the remote api'+ 
+        it('has a mapFieldsAndQuery method iterate over the collection returned from the remote api'+ 
             'and form a query object from its documents\' fields and values, and form a bulk query', function(done){
-            
+          assert(dbServiceHelpers.mapFieldsAndQuery);
+          done();    
         });
-      })
       
-      describe('queries', function(done){
-        xit('performs geospatial queries', function(done){
+  //     describe('queries', function(done){
+  //       xit('performs geospatial queries', function(done){
         
-        });
-      })
+  //       });
+  //     })
+      
+      });
       
       describe('connections', function(done){
               
-        xit('stores its state of being connected or disconnected to the database', function(done){
-      
+        it('stores its state of being connected or disconnected to the database', function(done){
+          expect(db.isConnected).to.be.a('Boolean');
+          done();
         });
         
-        xit('exits gracefully on disconnections', function(done){
-      
-        });
-
+        // it('exits gracefully on disconnections', function(done){
+                  
+        // })
       });
-    })
+    });
   });
 
   describe('API Sync Worker', function(done){
-    var config  = require('../config.js');
     var ApiSync = require('../apiSync');
     var connection = null;
-    
-    beforeEach(function(done){
-       // ApiSync.run(config.dbPath, function(connection){
-       //    if (connection){ 
-       //      connection = connection
-       //      done();
-       //    } else {
-       //      process.exit(1);
-       //    }
-       //  });
-    })
-    
-    describe('connections', function(done){
-    
-      xit('connects to the Database Service', function(done){
-          assert(connection);
-          done()
-      });
-      
-      xit('exits properly when disconnecting', function(done){
-      
-      });
-    
-    })
 
     describe('methods', function(done){
       
@@ -296,16 +308,31 @@
         done();
       });
       
-      xit('forms queries from a query object for the appropriate fields', function(done){
+      // xit('forms queries from a query object for the appropriate fields', function(done){
+      //   ApiSync.run(config.dbPath,function(connection){
+      //     if (connection) {
+      //       ApiSync.fetchRemoteApi(function(query){
+      //         assert(query)
+      //         done();
+      //       });
+      //     }
+      //   })
+      // });
       
-      });
-      
-      xit('makes requests to the Database Service to upsert documents', function(done){
+      // xit('makes requests to the Database Service to upsert documents', function(done){
         
-      });
+      // });
 
     });
 
+    describe('connections', function(done){
+      it('connects to the Database Service', function(done){
+        ApiSync.run(config.dbPath, function(connection){
+          assert(connection);
+          done()
+        });
+      });
+    })
   });
 
   describe('Models Module / ORM', function(done){
@@ -315,6 +342,7 @@
       
       done()
     })
+    
     describe('methods', function(done){
       
       it('has a get method to retrieve instances of Mongoose models', function(done){
@@ -331,9 +359,8 @@
         assert(Models.get('Truck').schema)
         done();
       });
-
-    });
-
+    }) 
   });
 
-}());
+
+// }());

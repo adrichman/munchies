@@ -74,14 +74,14 @@ MunchiesMapView.prototype.requestNearby = function(dist, n, coords){
     };
     
     var renderCallback = function(){
-      this.nearbyTruckQueue.length && this.displayNewTrucks.call(this, n);  
+      self.nearbyTruckQueue.length && self.displayNewTrucks.call(self, n);  
     };
     
-    if (this.map.renderedTrucks.lastRequestCoords === coords) {
+    if (self.map.renderedTrucks.lastRequestCoords === coords) {
       renderCallback();
     } else {
       jqxhr().done(renderCallback);
-      this.map.renderedTrucks.lastRequestCoords = this.map.googleMap.getCenter();
+      self.map.renderedTrucks.lastRequestCoords = this.map.googleMap.getCenter();
     }
   }
 };

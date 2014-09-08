@@ -19,7 +19,7 @@
       })
   };
 
-  APISync.fetchRemoteApi = function(){
+  APISync.fetchRemoteApi = function(cb){
     request.get('http://data.sfgov.org/resource/rqzj-sfat.json', function(err, res, body){
       if(err) return console.error(err);
 
@@ -31,12 +31,14 @@
       db.requiresSync(body, 'Truck', queryFields, db.sync, checksumPath)
       .then(function(res){
         debug('write errors: %s', !+res ? 0 : res);
+        cb && cb(queryFields);
         process.exit(0);
       })
-      .fail(function(err){
+      .catch(function(err){
+        cb && cb(queryFields);
         throw new Error(err);
         process.exit(1);
-      });
+      })
     });
   };
 
