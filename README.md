@@ -89,7 +89,7 @@ The trade-off for using mongo, and its ORM mongoose, is that I find it's query l
 Front-end: a framework might have helped me structure my code more cleanly. I figured it would be overkill for this project, but I came to find that I wasn't totally enjoying the process of navigating my code after all of my recent development having been done in angular, backbone, etc. I guess, for me, a little structure and convention can go a long way, even in a small app. 
 
 ##Testing
-My biggest failure on this project was moving too quickly in the begining and not sticking with TDD. A test framework, Mocha, with tools like Chai, Supertest and Sinon, are all usually good to help me with my development. However, I spun my wheels very long on what appears to be currently broken implementations in Mocha for asynchronous testing. Without being able to successfully stub out any of the features of my API without my tests allowing me to resolve in callbacks or promises, I decided I would move forward with building and figure out which Mocha commit to roll back to later, or which past project to yank it from. It was a tough decision but I felt pressure to advance and build it out. Now I have an incomplete test suite and it's the absolute priority to fix this before implementing any new features.
+My biggest failure on this project was moving too quickly in the begining and not sticking with TDD. A test framework, Mocha, with tools like Chai, Supertest and Sinon, are all usually good to help me with my development. I felt the pressure to advance and build it out due to time constraints, but now I have an incomplete test suite, which is the top priority to fix before implementing any new features. I believe the lack of unit testing along the way led to some overly-tight coupling between modules that I would like to revisit.
 
 my blog: [www.adamrichman.com](http://www.adamrichman.com)
 
@@ -99,8 +99,9 @@ my github: [github.com/adrichman](http://github.com/adrichman)
 
 ### TODO:
 
+* more test coverage
 * enable initialization without requiring geolocation service
 * parse pdf schedules to query for "open now"
 * filter by food type
 * food types (filter by)
-* more test coverage
+* an eventing or pub/sub module to allow for more decoupling and fewer dependencies. 
